@@ -1,2 +1,1 @@
-# AnalyticsCapstone
-<placeholder>
+## AnalyticsCapstone
