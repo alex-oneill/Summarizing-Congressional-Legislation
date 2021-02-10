@@ -41,6 +41,3 @@ for session_data in session_dict.values():
     # print(type_dict)
 
 # todo next loop will need to grab all bill_type links to collect links for actual documents
-
-
-
