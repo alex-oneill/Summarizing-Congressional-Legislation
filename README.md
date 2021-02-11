@@ -5,6 +5,8 @@ During congressional negotiations over the details of the Consolidated Appropria
 ### Goal:
 Identify, define, and implement metrics for congressional bills that will provide an accurate summary of the bill details. These metrics can then be used to target specific areas of the bill that warrant a further suitability review.
 
+*Data:* https://www.govinfo.gov/bulkdata/ - This repository includes XML and JSON format congressional documentation including full-text bills, rules manuals, bill summaries, bill statuses, and Supreme Court decisions.
+
 ### Objectives:
 - Produce a value:recipient mapping of all spending directives proposed in the bill by scanning the text and parsing the financial allocation and recipient pairings. Every recipient of proposed funding should be identified.
 - Produce a most and least prevalent keyword cloud by tokenizing the text, counting frequencies, and identifying keywords. The most prevalent keywords should be closely related to the topic of the bill; the least prevalent keywords should be least related to the topic of the bill.
