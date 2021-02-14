@@ -1,5 +1,5 @@
-## AnalyticsCapstone - Summaring Congressional Documents
-### *Identifying Financial Allocations and Scoring Relevancy*
+# AnalyticsCapstone - Summaring Congressional Documents
+## *Identifying Financial Allocations and Scoring Relevancy*
 
 ### Problem/Opportunity:
 >During congressional negotiations over the details of the Consolidated Appropriations Act, 2021 (HR 133), there was a media frenzy over the length (5,593 pages) and details of the bill. This narrative was centered around the impossible task of reading the bill in its entirety before representatives were expected to vote on its approval. Many voters are skeptical of government spending and the bundling of unrelated issues into single bills. By programmatically summarizing these lengthy bills, representatives can gain greater transparency into the issues they are voting on, and voters can better hold elected officials responsible for accurately representing the interests of their constituents. 
