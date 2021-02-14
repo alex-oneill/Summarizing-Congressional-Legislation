@@ -1,4 +1,4 @@
-# Capstone - Summaring Congressional Documents
+# Capstone - Summarizing Congressional Documents
 ## *Identifying Financial Allocations and Scoring Relevancy*
 
 ### Problem/Opportunity:
