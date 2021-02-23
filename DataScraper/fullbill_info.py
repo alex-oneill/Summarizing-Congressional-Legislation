@@ -7,7 +7,7 @@ import json
 def main():
 
     # todo input congress number to the stub
-    congress_input = '117'
+    congress_input = '116'
     bill_stub = f'https://www.govinfo.gov/bulkdata/xml/BILLS/{congress_input}'
 
     # todo LIVE REQUESTS
