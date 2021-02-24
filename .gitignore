@@ -1,1 +1,2 @@
-DataScraper/*.json
+DataScraper/FullBill*.json
+DataScraper/SummaryBill*.json
