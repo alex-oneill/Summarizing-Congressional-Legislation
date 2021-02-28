@@ -65,10 +65,13 @@ result_list = get_billsum_rows()
 # RESULT LIST TUPLE STRUCTURE
 # [0] = full_title, [1] = name, [2] = section, [3] = link, [4] = congress, [5] = session, [6] = modified_data
 for db_row in result_list:
-    raw_text = fetch_xml(db_row[3])
-    parse_insert_row(raw_text, db_row[3])
-    print('Inserted ', db_row[3], '. Sleeping peacefully until next fetch...')
-    time.sleep(10)
+    try:
+        raw_text = fetch_xml(db_row[3])
+        parse_insert_row(raw_text, db_row[3])
+        print('Inserted ', db_row[3], '. Sleeping peacefully until next fetch...')
+        time.sleep(10)
+    except Exception as e:
+        print('Caught exception! Moving along\n', e)
 
 cur.close()
 conn.close()
