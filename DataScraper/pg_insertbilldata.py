@@ -30,12 +30,31 @@ params = config()
 conn = psycopg2.connect(**params)
 cur = conn.cursor()
 
-# MAKE TABLE
-# cur.execute(execute_sql('makeInfoTable.sql'))
 
 # INSERT SUMMARY INTO TABLE
 # todo adjust the input file
-data = read_bill_info('SummaryBillData_117thCongress.json')
+# data = read_bill_info('SummaryBillData_117thCongress.json')
+# for k, v in data.items():
+#
+#     cur.execute("""INSERT INTO bill_info (full_title, name, section, link, congress, modified)
+#                 VALUES (%s, %s, %s, %s, %s, %s)""",
+#                 (v['Title'][:-4],
+#                  v['Title'].split('-')[1][:-4],
+#                  v['Section'],
+#                  v['Link'],
+#                  v['Congress'],
+#                  v['Modified']))
+
+    # full_title = v['Title'][:-4]
+    # name = v['Title'].split('-')[1][:-4]
+    # section = v['Section']
+    # link = v['Link']
+    # congress = v['Congress']
+    # modified = v['Modified']
+
+# INSERT FULL TEXT INFO INTO TABLE
+# todo adjust sql for full text input
+data = read_bill_info('FullBillData_116thCongress.json')
 for k, v in data.items():
 
     cur.execute("""INSERT INTO bill_info (full_title, name, section, link, congress, modified)
@@ -53,9 +72,6 @@ for k, v in data.items():
     # link = v['Link']
     # congress = v['Congress']
     # modified = v['Modified']
-
-# INSERT FULL TEXT INFO INTO TABLE
-# todo adjust sql for full text input
 
 cur.close()
 conn.commit()
