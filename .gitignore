@@ -1,2 +1,4 @@
 DataScraper/FullBill*.json
 DataScraper/SummaryBill*.json
+
+database.ini
