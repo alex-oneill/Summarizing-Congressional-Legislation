@@ -4,6 +4,7 @@ import json
 
 
 def config(filename='../database.ini', section='postgres'):
+    """Establishes connection to local postgres db with masked credentials."""
     parser = ConfigParser()
     parser.read(filename)
     db_conn = {}
@@ -12,14 +13,8 @@ def config(filename='../database.ini', section='postgres'):
     return db_conn
 
 
-def execute_sql(sql_file):
-    file_in = open(sql_file, 'r')
-    sql = file_in.read()
-    file_in.close()
-    return sql
-
-
 def read_bill_info(file):
+    """Reads in json file of bill info from initial scraping."""
     file_in = open(file, 'r')
     info_dict = json.load(file_in)
     file_in.close()
@@ -29,6 +24,15 @@ def read_bill_info(file):
 params = config()
 conn = psycopg2.connect(**params)
 cur = conn.cursor()
+
+# STRUCTURE FROM JSON VALUES
+# full_title = v['Title'][:-4]
+# name = v['Title'].split('-')[1][:-4]
+# section = v['Section']
+# link = v['Link']
+# congress = v['Congress']
+# session = v['Session']
+# modified = v['Modified']
 
 
 # INSERT SUMMARY INTO TABLE
@@ -45,33 +49,20 @@ cur = conn.cursor()
 #                  v['Congress'],
 #                  v['Modified']))
 
-    # full_title = v['Title'][:-4]
-    # name = v['Title'].split('-')[1][:-4]
-    # section = v['Section']
-    # link = v['Link']
-    # congress = v['Congress']
-    # modified = v['Modified']
-
 # INSERT FULL TEXT INFO INTO TABLE
-# todo adjust sql for full text input
+# todo adjust the input file
 data = read_bill_info('FullBillData_116thCongress.json')
 for k, v in data.items():
 
-    cur.execute("""INSERT INTO bill_info (full_title, name, section, link, congress, modified)
-                VALUES (%s, %s, %s, %s, %s, %s)""",
+    cur.execute("""INSERT INTO bill_info (full_title, name, section, link, congress, session, modified)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)""",
                 (v['Title'][:-4],
                  v['Title'].split('-')[1][:-4],
                  v['Section'],
                  v['Link'],
                  v['Congress'],
+                 v['Session'],
                  v['Modified']))
-
-    # full_title = v['Title'][:-4]
-    # name = v['Title'].split('-')[1][:-4]
-    # section = v['Section']
-    # link = v['Link']
-    # congress = v['Congress']
-    # modified = v['Modified']
 
 cur.close()
 conn.commit()

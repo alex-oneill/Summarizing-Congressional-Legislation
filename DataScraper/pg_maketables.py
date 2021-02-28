@@ -3,6 +3,7 @@ from configparser import ConfigParser
 
 
 def config(filename='../database.ini', section='postgres'):
+    """Establishes connection to local postgres db with masked credentials."""
     parser = ConfigParser()
     parser.read(filename)
     db_conn = {}
@@ -12,6 +13,7 @@ def config(filename='../database.ini', section='postgres'):
 
 
 def execute_sql(sql_file):
+    """Executes a the sql query in an external file."""
     file_in = open(sql_file, 'r')
     sql = file_in.read()
     file_in.close()
