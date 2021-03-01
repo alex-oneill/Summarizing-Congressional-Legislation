@@ -1,5 +1,6 @@
 CREATE TABLE IF NOT EXISTS bill_info (
     full_title text not null,
+    short_name text not null,
     name text not null,
     section text not null,
     link text not null,
