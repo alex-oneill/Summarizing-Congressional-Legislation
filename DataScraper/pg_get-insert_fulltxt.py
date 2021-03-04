@@ -24,7 +24,6 @@ def get_billsum_rows():
             WHERE B.SECTION = 'BILLS'
             ORDER BY B.SHORT_NAME"""
     cur.execute(query)
-    # rows = cur.fetchall()
     rows = cur.fetchall()
     return rows
 
@@ -37,7 +36,7 @@ def fetch_xml(link):
 
 
 def parse_insert_row(data, db_info):
-    """Parses BeautifulSoup text and inserts relevant roles into the sum_full_text table."""
+    """Parses BeautifulSoup text and inserts relevant rows into the sum_full_text table."""
 
     full_title = db_info[0]
     short_name = db_info[1]
@@ -57,12 +56,6 @@ def parse_insert_row(data, db_info):
     word_list = data.find_all('text')
     words = str([(k, v) for k, v in enumerate(word_list)])
 
-    # sum_text = data.find('summary-text').text
-    # measure_type = data.find('item').get('measure-type')
-    # measure_number = data.find('item').get('measure-number')
-    # origin_chamber = data.find('item').get('originChamber')
-    # orig_publish = data.find('item').get('orig-publish-date')
-
     cur.execute("""INSERT INTO bills_full_text (full_title, short_name, name, section, link, congress, session,
                 bill_title, title_sum, publisher, date, header, words)
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
@@ -78,9 +71,15 @@ cur = conn.cursor()
 
 result_list = get_billsum_rows()
 
-# todo
 # RESULT LIST TUPLE STRUCTURE
-# [0] = full_title, [1] = name, [2] = section, [3] = link, [4] = congress, [5] = session, [6] = modified_data
+# 0 = {str} 'BILLS-116hconres19eh'
+# 1 = {str} '116hconres19'
+# 2 = {str} '116hconres19eh'
+# 3 = {str} 'BILLS'
+# 4 = {str} 'https://www.govinfo.gov/bulkdata/BILLS/116/1/hconres/BILLS-116hconres19eh.xml'
+# 5 = {str} '116'
+# 6 = {str} '1'
+# 7 = {datetime} 2019-04-10 06: 27:00
 for db_row in result_list:
     try:
         raw_text = fetch_xml(db_row[4])
