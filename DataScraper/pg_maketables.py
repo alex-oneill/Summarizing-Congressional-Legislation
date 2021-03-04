@@ -24,6 +24,9 @@ params = config()
 conn = psycopg2.connect(**params)
 cur = conn.cursor()
 
+# MAKE FULL TEXT BILL TABLE
+cur.execute(execute_sql('makeBillsFullTxtTable.sql'))
+
 # MAKE FULL TEXT SUMMARY TABLE
 # cur.execute(execute_sql('makeSummaryFullTxtTable.sql'))
 
