@@ -26,8 +26,7 @@ def get_text():
             INNER JOIN sum_full_text B ON B.name = A.short_name
             ORDER BY A.short_name"""
     cur.execute(query)
-    # rows = cur.fetchall()
-    rows = cur.fetchmany(2)
+    rows = cur.fetchall()
     return rows
 
 
@@ -47,36 +46,18 @@ def parse_insert_row(data, db_info):
     full_title = db_info[3]
     short_title = db_info[4]
     summary_1 = db_info[5]
-    summary_2 = db_info[6]
+    summary_2 = re.sub(r'<.+?>', '', db_info[6])
     summary_3 = db_info[7]
-    # bill_title = data.find('dc:title').text
-    # title = data.find('dc:title').text
-    # publisher = data.find('dc:publisher').text
-    # if data.find('dc:date').text == '':
-    #     date = None
-    # else:
-    #     date = data.find('dc:date').text
-    # header = ' '.join(data.find('official-title').text.split())
     word_list = data.find_all('text')
-    # words = str([(k, v) for k, v in enumerate(word_list)])
 
     for k, text_line in enumerate(word_list):
         # mod = re.sub(r'<.+?>', '', text_line)
-        print(k, text_line.text)
-
-# def make_txt_tuples(str_text):
-#     """Ingests full words string, removes xml tags, and splits into tuples of (row #, section). Returns a list of
-#     these tuples"""
-#     word_list = []
-#     for words in str_text[8][2:-2].split('), ('):
-#         if '<text' in words:
-#             mod = re.sub(r'<.+?>', '', words)
-#             line_num, text = mod.split(', ', 1)
-#             row_tup = (line_num, text)
-#             word_list.append(row_tup)
-#     for word in word_list:
-#         print(word)
-#     return word_list
+        cur.execute("""INSERT INTO text_row (id, short_name, name, link, full_title, short_title, summary_1,
+                    summary_2, summary_3, row_number, row_text)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+                    (name+'-'+str(k), short_name, name, link, full_title, short_title, summary_1, summary_2,
+                     summary_3, k, text_line.text))
+        conn.commit()
 
 
 params = config()
@@ -103,11 +84,6 @@ for row in rowdata:
     except Exception as e:
         print('Caught exception! Moving along\n', e)
 
-    # make_txt_tuples(row)
-
-
 cur.close()
 conn.close()
 print('Fetching and inserting is done. All connections closed')
-
-# r"\([^<>]*\)",
