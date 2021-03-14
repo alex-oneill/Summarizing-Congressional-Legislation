@@ -3,6 +3,7 @@ database.ini
 
 # templates
 *template*
+test*.sql
 
 # text and data files
 DataScraper/FullBill*.json
