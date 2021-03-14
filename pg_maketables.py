@@ -2,7 +2,7 @@ import psycopg2
 from configparser import ConfigParser
 
 
-def config(filename='../database.ini', section='postgres'):
+def config(filename='database.ini', section='postgres'):
     """Establishes connection to local postgres db with masked credentials."""
     parser = ConfigParser()
     parser.read(filename)
@@ -25,16 +25,19 @@ conn = psycopg2.connect(**params)
 cur = conn.cursor()
 
 # MAKE TEXT ROW TABLE
-# cur.execute(execute_sql('makeTextRowTable.sql'))
+# cur.execute(execute_sql(r'DataScraper\makeTextRowTable.sql'))
 
 # MAKE FULL TEXT BILL TABLE
-# cur.execute(execute_sql('makeBillsFullTxtTable.sql'))
+# cur.execute(execute_sql(r'DataScraper\makeBillsFullTxtTable.sql'))
 
 # MAKE FULL TEXT SUMMARY TABLE
-# cur.execute(execute_sql('makeSummaryFullTxtTable.sql'))
+# cur.execute(execute_sql(r'DataScraper\makeSummaryFullTxtTable.sql'))
 
 # MAKE BILL INFO TABLE
-# cur.execute(execute_sql('makeInfoTable.sql'))
+# cur.execute(execute_sql(r'DataScraper\makeInfoTable.sql'))
+
+# MAKE FINANCIAL ALLOCATION HIT TABLE
+# cur.execute(execute_sql(r'FinancialAllocations\makeMoneyHitTable.sql'))
 
 cur.close()
 conn.commit()
