@@ -1,6 +1,9 @@
 # database config
 database.ini
 
+# templates
+*template*
+
 # text and data files
 DataScraper/FullBill*.json
 DataScraper/SummaryBill*.json
