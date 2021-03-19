@@ -13,28 +13,50 @@ def config(filename='../database.ini', section='postgres'):
     return db_conn
 
 
-def get_rows():
+def get_rows() -> list:
     """Fetches text rows to be searched for matches from the text_row table"""
     query = """SELECT id, row_number, row_text FROM text_row"""
     cur.execute(query)
-    rows = cur.fetchmany(200)
+    # rows = cur.fetchmany(10000)
+    rows = cur.fetchall()
     return rows
 
 
-def search(row):
-    text = row[2]
-    ds = re.compile('\$')
+def search(text_row: tuple):
+    """Scans input text row for symbol, phrase, or keyword matches, then returns matches to the money_hits table"""
+    text = text_row[2]
+
+    # NOTE: ds = dollar sign match
+    # NOTE: re_phrase = regexp phrase match
+    # NOTE: kw = key word match
+    ds = re.compile(r'\$')
+    kw = ['fund', 'dollar']
+    not_more_perc = re.compile(r'not more than \w+ percent')
+    perc_of_fund = re.compile(r'percent of fund')
+    phrase_list = [not_more_perc, perc_of_fund]
 
     if ds.search(text):
-        row_out = (row[0], "ds", row[1], row[2])
+        row_out = (text_row[0], 'ds', text_row[1], text_row[2])
         insert_to_hit_tbl(row_out)
-    # todo elif kw match
-        # todo insert_to_hit_tbl
-    # todo nothing
-    # print(text)
+    elif any(phrase.search(text) for phrase in phrase_list):
+        row_out = (text_row[0], 're_phrase', text_row[1], text_row[2])
+        insert_to_hit_tbl(row_out)
+    elif any(key_w in text.split() for key_w in kw):
+        row_out = (text_row[0], 'kw', text_row[1], text_row[2])
+        insert_to_hit_tbl(row_out)
+    # TODO check for 3k row discrepancy between search() and the below sql
+    """ SELECT * FROM text_row
+        WHERE id NOT IN (SELECT id FROM money_hits) AND (
+        row_text LIKE '%$%'
+        OR row_text LIKE '%not more than%percent%'
+        OR row_text LIKE '%percent of funds%'
+        OR row_text LIKE '%dollar%'
+        OR row_text LIKE '%fund%'
+        );
+    """
 
 
-def insert_to_hit_tbl(row_tup):
+def insert_to_hit_tbl(row_tup: tuple):
     """Inserts matched string info into the money hits table"""
     (row_id, hit_type, row_number, row_text) = row_tup
     cur.execute("""INSERT INTO money_hits (id, hit_type, row_number, row_text)
@@ -49,7 +71,7 @@ cur = conn.cursor()
 
 db_info = get_rows()
 
-# todo PURGE OLD
+# TODO PURGE OLD
 cur.execute("""DELETE FROM money_hits""")
 conn.commit()
 
