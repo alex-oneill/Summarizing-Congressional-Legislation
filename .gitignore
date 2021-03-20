@@ -9,3 +9,6 @@ test*.sql
 DataScraper/FullBill*.json
 DataScraper/SummaryBill*.json
 DataScraper/*.xml
+
+# doc2vec guides
+VectorScoring/run*.py
