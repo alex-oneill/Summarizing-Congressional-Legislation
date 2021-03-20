@@ -30,21 +30,27 @@ def search(text_row: tuple):
     # NOTE: re_phrase = regexp phrase match
     # NOTE: kw = key word match
     ds = re.compile(r'\$')
-    kw = ['fund', 'dollar']
-    not_more_perc = re.compile(r'not more than \w+ percent')
     perc_of_fund = re.compile(r'percent of fund')
+    not_more_perc = re.compile(r'not more than [\w.,]+ percent')
     phrase_list = [not_more_perc, perc_of_fund]
+    kw = ['fund', 'funds', 'funded', 'dollar']
 
     if ds.search(text):
         row_out = (text_row[0], 'ds', text_row[1], text_row[2])
         insert_to_hit_tbl(row_out)
+
     elif any(phrase.search(text) for phrase in phrase_list):
         row_out = (text_row[0], 're_phrase', text_row[1], text_row[2])
         insert_to_hit_tbl(row_out)
-    elif any(key_w in text.split() for key_w in kw):
+
+    # NOTE: partial word match option instead of whole world above
+    # elif any(key_w in text for key_w in kw):
+    elif any(key_w in text.lower().split() for key_w in kw):
         row_out = (text_row[0], 'kw', text_row[1], text_row[2])
         insert_to_hit_tbl(row_out)
-    # TODO check for 3k row discrepancy between search() and the below sql
+
+    # NOTE: there may be discrepancies between the sql and python matching
+    #   this can be evidenced with the following sql query:
     """ SELECT * FROM text_row
         WHERE id NOT IN (SELECT id FROM money_hits) AND (
         row_text LIKE '%$%'
@@ -65,13 +71,14 @@ def insert_to_hit_tbl(row_tup: tuple):
     conn.commit()
 
 
+# SECTION: MAIN()
 params = config()
 conn = psycopg2.connect(**params)
 cur = conn.cursor()
 
 db_info = get_rows()
 
-# TODO PURGE OLD
+# TODO: purge old files from money_hits table if starting fresh
 cur.execute("""DELETE FROM money_hits""")
 conn.commit()
 
