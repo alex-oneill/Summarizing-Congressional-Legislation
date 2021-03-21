@@ -11,7 +11,9 @@ class Document:
                        'stnd_row_text': tup_zero[11]}]
 
     def __str__(self):
-        pass
+        text_str = ', '.join([text["row_text"] for text in self.texts])
+        # stnd_text = ([text['stnd_row_text'] for text in self.texts])
+        return '{} -- {}'.format(self.short_name, text_str)
 
     def add_text_row(self, tup_new):
         self.texts.append({'id': tup_new[0],
