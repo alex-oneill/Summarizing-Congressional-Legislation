@@ -42,6 +42,7 @@ def standardize(row_tup: tuple) -> tuple:
     stnd_word_list = stnd_word_str.split()
     return row_tup + (stnd_word_list,)
 
+
 # TODO: remove stop-words
 # TODO: stemming and lemmatization
 
