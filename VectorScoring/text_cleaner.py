@@ -1,6 +1,8 @@
 import psycopg2
 from configparser import ConfigParser
 import re
+import logging
+from Document import Document
 
 
 def config(filename='../database.ini', section='postgres'):
@@ -20,7 +22,7 @@ def get_rows() -> list:
             FROM text_row
             ORDER BY short_name, row_number"""
     cur.execute(query)
-    # rows = cur.fetchmany(100)
+    # rows = cur.fetchmany(5)
     rows = cur.fetchall()
     return rows
 
@@ -44,11 +46,26 @@ def standardize(row_tup: tuple) -> tuple:
 # TODO: stemming and lemmatization
 
 
+def make_corpus(all_docs: list) -> list:
+    documents = []
+    doc = (doc_tup for doc_tup in all_docs)
+    for document in all_docs:
+        this_doc = next(doc)
+        if this_doc[2] in [dc.short_name for dc in documents]:
+            for dc in documents:
+                if dc.short_name == this_doc[2]:
+                    dc.add_text_row(document)
+        else:
+            documents.append(Document(this_doc))
+    return documents
+
+
+# SECTION: MAIN()
 params = config()
 conn = psycopg2.connect(**params)
 cur = conn.cursor()
+logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
-# SECTION: MAIN()
 text_rows = get_rows()
 # NOTE: text_rows tuple format...
 # 00 = {str} id
@@ -67,6 +84,10 @@ stnd_rows = []
 for row in text_rows:
     # NOTE: adds tup[11] = {list} stnd_row_text
     stnd_rows.append(standardize(row))
+
+doc_list = make_corpus(stnd_rows)
+# for a_doc in doc_list:
+#     print(a_doc)
 
 # NOTE: reclaim memory
 # del text_rows
