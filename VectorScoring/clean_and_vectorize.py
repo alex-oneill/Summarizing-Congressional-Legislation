@@ -3,6 +3,8 @@ from configparser import ConfigParser
 import re
 import logging
 from Document import Document
+from collections import defaultdict
+from gensim import corpora
 
 
 def config(filename='../database.ini', section='postgres'):
@@ -15,6 +17,7 @@ def config(filename='../database.ini', section='postgres'):
     return db_conn
 
 
+# SECTION: CLEAN AND MAKE CORPUS
 def get_rows() -> list:
     """Fetches text rows to be searched for matches from the text_row table"""
     query = """SELECT DISTINCT ON(short_name, row_number) id, concat(short_name, '-', row_number) AS blend_id, 
@@ -22,8 +25,9 @@ def get_rows() -> list:
             FROM text_row
             ORDER BY short_name, row_number"""
     cur.execute(query)
-    # rows = cur.fetchmany(5)
-    rows = cur.fetchall()
+    # TODO: ADJUST FETCH FOR FINAL
+    # rows = cur.fetchall()
+    rows = cur.fetchmany(100)
     return rows
 
 
@@ -69,17 +73,9 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 
 text_rows = get_rows()
 # NOTE: text_rows tuple format...
-# 00 = {str} id
-# 01 = {str} blend_id
-# 02 = {str} short_name
-# 03 = {str} name
-# 04 = {str} full_title
-# 05 = {str} short_title
-# 06 = {str} summary_1
-# 07 = {str} summary_2
-# 08 = {str} summary_3
-# 09 = {int} row_number
-# 10 = {str} row_text
+# 00 = {str} id # 01 = {str} blend_id # 02 = {str} short_name # 03 = {str} name # 04 = {str} full_title
+# 05 = {str} short_title # 06 = {str} summary_1 # 07 = {str} summary_2 # 08 = {str} summary_3
+# 09 = {int} row_number # 10 = {str} row_text
 
 stnd_rows = []
 for row in text_rows:
@@ -87,9 +83,18 @@ for row in text_rows:
     stnd_rows.append(standardize(row))
 
 doc_list = make_corpus(stnd_rows)
-# for a_doc in doc_list:
-#     print(a_doc)
+# for doc in doc_list:
+#     print(doc)
 
+from pprint import pprint
+for bill in doc_list[:1]:
+    texts = [doc['stnd_row_text'] for doc in bill.texts]
+    # pprint(texts)
+    corp_dictionary = corpora.Dictionary(texts)
+    print(corp_dictionary)
+    print(corp_dictionary.token2id)
+    corpus = [corp_dictionary.doc2bow(text) for text in texts]
+    print(corpus)
 # NOTE: reclaim memory
 # del text_rows
 

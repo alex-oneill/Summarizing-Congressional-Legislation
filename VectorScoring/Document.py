@@ -12,7 +12,6 @@ class Document:
 
     def __str__(self):
         text_str = ', '.join([text["row_text"] for text in self.texts])
-        # stnd_text = ([text['stnd_row_text'] for text in self.texts])
         return '{} -- {}'.format(self.short_name, text_str)
 
     def add_text_row(self, tup_new):
