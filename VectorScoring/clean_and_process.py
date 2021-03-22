@@ -3,8 +3,6 @@ from configparser import ConfigParser
 import re
 import logging
 from Document import Document
-from collections import defaultdict
-from gensim import corpora
 
 
 def config(filename='../database.ini', section='postgres'):
@@ -26,8 +24,8 @@ def get_rows() -> list:
             ORDER BY short_name, row_number"""
     cur.execute(query)
     # TODO: ADJUST FETCH FOR FINAL
-    # rows = cur.fetchall()
-    rows = cur.fetchmany(100)
+    rows = cur.fetchall()
+    # rows = cur.fetchmany(100)
     return rows
 
 
@@ -37,10 +35,11 @@ def standardize(row_tup: tuple) -> tuple:
     for word in word_list:
         en_str = word.encode('ascii', 'ignore')
         de_str = en_str.decode()
-        if '-' in word:
-            sym_word = word
-        else:
-            sym_word = re.sub(r'[^a-z]+', '', de_str)
+        # FIXME: TOO MANY WORDS WITH - INCLUDE UNICODE ERRORS
+        # if '-' in word:
+        #     sym_word = word
+        # else:
+        sym_word = re.sub(r'[^a-z]+', '', de_str)
         stnd_word_list.append(sym_word)
     stnd_word_str = ' '.join(stnd_word_list)
     stnd_word_list = stnd_word_str.split()
@@ -83,21 +82,32 @@ for row in text_rows:
     stnd_rows.append(standardize(row))
 
 doc_list = make_corpus(stnd_rows)
-# for doc in doc_list:
-#     print(doc)
 
-from pprint import pprint
-for bill in doc_list[:1]:
-    texts = [doc['stnd_row_text'] for doc in bill.texts]
-    # pprint(texts)
-    corp_dictionary = corpora.Dictionary(texts)
-    print(corp_dictionary)
-    print(corp_dictionary.token2id)
-    corpus = [corp_dictionary.doc2bow(text) for text in texts]
-    print(corpus)
+# NOTE: inspect document class objects
+# for bill in doc_list[:1]:
+#     texts = [doc['stnd_row_text'] for doc in bill.texts]
+#     corp_dictionary = corpora.Dictionary(texts)
+#     print(corp_dictionary)
+#     print(corp_dictionary.token2id)
+#     corpus = [corp_dictionary.doc2bow(text) for text in texts]
+#     print(corpus)
+
+# NOTE: write docs to text corpus .cor files
+# for bill in doc_list:
+#     title = bill.short_name
+#     texts = [doc['stnd_row_text'] for doc in bill.texts]
+#     file_name = title + '.cor'
+#     with open('corpus_docs\\' + file_name, 'w') as file:
+#         for sent in texts:
+#             try:
+#                 sent_line = ' '.join(sent)
+#                 file.write(sent_line + '\n')
+#             except UnicodeEncodeError as e:
+#                 print('Unicode Error:\n', file_name, e)
+#                 print(sent_line)
+
 # NOTE: reclaim memory
 # del text_rows
 
 cur.close()
 conn.close()
-
