@@ -1,0 +1,216 @@
+
+Model: Doc2Vec(dm/m,d24,n5,w5,mc5,s0.001,t3)
+Top 5 Count: 378/10316: 3.664210934470725%
+Top 10 Count: 406/10316: 3.935633966653742%
+Top 20 Count: 446/10316: 4.323381155486623%
+Epochs: 40	Vector-Size: 24
+
+
+
+
+Model: Doc2Vec(dm/m,d36,n5,w5,mc5,s0.001,t3)
+Top 5 Count: 386/10316: 3.7417603722373016%
+Top 10 Count: 421/10316: 4.081039162466072%
+Top 20 Count: 460/10316: 4.459092671578131%
+Epochs: 40	Vector-Size: 36
+
+
+
+
+Model: Doc2Vec(dm/m,d48,n5,w5,mc5,s0.001,t3)
+Top 5 Count: 386/10316: 3.7417603722373016%
+Top 10 Count: 419/10316: 4.061651803024429%
+Top 20 Count: 456/10316: 4.420317952694843%
+Epochs: 40	Vector-Size: 48
+
+
+
+
+Model: Doc2Vec(dm/m,d24,n5,w5,mc5,s0.001,t3)
+Top 5 Count: 399/10316: 3.8677782086079873%
+Top 10 Count: 432/10316: 4.187669639395114%
+Top 20 Count: 473/10316: 4.5851105079488175%
+Epochs: 60	Vector-Size: 24
+
+
+
+
+Model: Doc2Vec(dm/m,d36,n5,w5,mc5,s0.001,t3)
+Top 5 Count: 401/10316: 3.8871655680496318%
+Top 10 Count: 429/10316: 4.158588600232648%
+Top 20 Count: 472/10316: 4.575416828227995%
+Epochs: 60	Vector-Size: 36
+
+
+
+
+Model: Doc2Vec(dm/m,d48,n5,w5,mc5,s0.001,t3)
+Top 5 Count: 393/10316: 3.8096161302830556%
+Top 10 Count: 429/10316: 4.158588600232648%
+Top 20 Count: 473/10316: 4.5851105079488175%
+Epochs: 60	Vector-Size: 48
+
+
+
+
+Model: Doc2Vec(dm/m,d24,n5,w5,mc5,s0.001,t3)
+Top 5 Count: 411/10316: 3.9841023652578524%
+Top 10 Count: 442/10316: 4.284606436603335%
+Top 20 Count: 478/10316: 4.633578906552927%
+Epochs: 80	Vector-Size: 24
+
+
+
+
+Model: Doc2Vec(dm/m,d36,n5,w5,mc5,s0.001,t3)
+Top 5 Count: 407/10316: 3.9453276463745635%
+Top 10 Count: 439/10316: 4.255525397440869%
+Top 20 Count: 482/10316: 4.672353625436215%
+Epochs: 80	Vector-Size: 36
+
+
+
+
+Model: Doc2Vec(dm/m,d48,n5,w5,mc5,s0.001,t3)
+Top 5 Count: 412/10316: 3.993796044978674%
+Top 10 Count: 444/10316: 4.303993796044979%
+Top 20 Count: 468/10316: 4.536642109344707%
+Epochs: 80	Vector-Size: 48
+
+
+
+
+Model: Doc2Vec(dm/m,d24,n5,w5,mc5,s0.001,t3)
+Top 5 Count: 417/10316: 4.042264443582784%
+Top 10 Count: 448/10316: 4.342768514928267%
+Top 20 Count: 497/10316: 4.817758821248546%
+Epochs: 100	Vector-Size: 24
+
+
+
+
+Model: Doc2Vec(dm/m,d36,n5,w5,mc5,s0.001,t3)
+Top 5 Count: 410/10316: 3.97440868553703%
+Top 10 Count: 448/10316: 4.342768514928267%
+Top 20 Count: 482/10316: 4.672353625436215%
+Epochs: 100	Vector-Size: 36
+
+
+
+
+Model: Doc2Vec(dm/m,d48,n5,w5,mc5,s0.001,t3)
+Top 5 Count: 416/10316: 4.032570763861962%
+Top 10 Count: 441/10316: 4.274912756882513%
+Top 20 Count: 478/10316: 4.633578906552927%
+Epochs: 100	Vector-Size: 48
+
+
+
+
+Model: Doc2Vec(dm/m,d24,n5,w5,mc5,s0.001,t3)
+Top 5 Count: 8639/10367: 83.33172566798495%
+Top 10 Count: 8879/10367: 85.64676376965372%
+Top 20 Count: 9179/10367: 88.54056139673966%
+Epochs: 40	Vector-Size: 24
+
+
+
+
+Model: Doc2Vec(dm/m,d36,n5,w5,mc5,s0.001,t3)
+Top 5 Count: 8797/10367: 84.85579241825022%
+Top 10 Count: 9074/10367: 87.52773222725956%
+Top 20 Count: 9322/10367: 89.91993826565063%
+Epochs: 40	Vector-Size: 36
+
+
+
+
+Model: Doc2Vec(dm/m,d48,n5,w5,mc5,s0.001,t3)
+Top 5 Count: 8847/10367: 85.33809202276454%
+Top 10 Count: 9114/10367: 87.91357191087104%
+Top 20 Count: 9336/10367: 90.05498215491463%
+Epochs: 40	Vector-Size: 48
+
+
+
+
+Model: Doc2Vec(dm/m,d24,n5,w5,mc5,s0.001,t3)
+Top 5 Count: 9136/10367: 88.12578373685733%
+Top 10 Count: 9412/10367: 90.7880775537764%
+Top 20 Count: 9688/10367: 93.45037137069548%
+Epochs: 60	Vector-Size: 24
+
+
+
+
+Model: Doc2Vec(dm/m,d36,n5,w5,mc5,s0.001,t3)
+Top 5 Count: 9171/10367: 88.46339346001736%
+Top 10 Count: 9439/10367: 91.04851934021414%
+Top 20 Count: 9731/10367: 93.8651490305778%
+Epochs: 60	Vector-Size: 36
+
+
+
+
+Model: Doc2Vec(dm/m,d48,n5,w5,mc5,s0.001,t3)
+Top 5 Count: 9202/10367: 88.76241921481625%
+Top 10 Count: 9477/10367: 91.41506703964502%
+Top 20 Count: 9738/10367: 93.9326709752098%
+Epochs: 60	Vector-Size: 48
+
+
+
+
+Model: Doc2Vec(dm/m,d24,n5,w5,mc5,s0.001,t3)
+Top 5 Count: 9341/10367: 90.10321211536606%
+Top 10 Count: 9607/10367: 92.66904601138228%
+Top 20 Count: 9865/10367: 95.15771197067619%
+Epochs: 80	Vector-Size: 24
+
+
+
+
+Model: Doc2Vec(dm/m,d36,n5,w5,mc5,s0.001,t3)
+Top 5 Count: 9363/10367: 90.31542394135236%
+Top 10 Count: 9637/10367: 92.95842577409087%
+Top 20 Count: 9881/10367: 95.31204784412077%
+Epochs: 80	Vector-Size: 36
+
+
+
+
+Model: Doc2Vec(dm/m,d48,n5,w5,mc5,s0.001,t3)
+Top 5 Count: 9370/10367: 90.38294588598438%
+Top 10 Count: 9645/10367: 93.03559371081316%
+Top 20 Count: 9905/10367: 95.54355165428764%
+Epochs: 80	Vector-Size: 48
+
+
+
+
+Model: Doc2Vec(dm/m,d24,n5,w5,mc5,s0.001,t3)
+Top 5 Count: 9497/10367: 91.60798688145076%
+Top 10 Count: 9756/10367: 94.10629883283495%
+Top 20 Count: 10011/10367: 96.56602681585801%
+Epochs: 100	Vector-Size: 24
+
+
+
+
+Model: Doc2Vec(dm/m,d36,n5,w5,mc5,s0.001,t3)
+Top 5 Count: 9486/10367: 91.5018809684576%
+Top 10 Count: 9751/10367: 94.05806887238353%
+Top 20 Count: 10002/10367: 96.47921288704543%
+Epochs: 100	Vector-Size: 36
+
+
+
+
+Model: Doc2Vec(dm/m,d48,n5,w5,mc5,s0.001,t3)
+Top 5 Count: 9462/10367: 91.27037715829073%
+Top 10 Count: 9752/10367: 94.0677148644738%
+Top 20 Count: 10010/10367: 96.55638082376773%
+Epochs: 100	Vector-Size: 48
+
+
+
