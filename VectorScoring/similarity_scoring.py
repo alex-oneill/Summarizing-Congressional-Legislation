@@ -55,60 +55,52 @@ def save_scores(score_tup: tuple) -> None:
     conn.commit()
 
 
-# SECTION: MAIN()
 params = config()
 conn = psycopg2.connect(**params)
 cur = conn.cursor()
 
+# SECTION: MODEL PREP
+logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
-def main():
+# NOTE: picked test doc has 10k+ lines
+doc_name = '116hr2500'
+doc_attributes = fetch_from_db(doc_name)
+train_corpus = list(make_corpus_DB(doc_attributes))
 
-    # SECTION: MODEL PREP
-    logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
+# SECTION: MODEL DESIGN
+vec_size = 24
+epoch = 100
+model = gensim.models.doc2vec.Doc2Vec(vector_size=vec_size, min_count=5, epochs=epoch, dm=1, alpha=0.025,
+                                      min_alpha=0.020)
+model.build_vocab(train_corpus)
 
-    # NOTE: picked test doc has 10k+ lines
-    doc_name = '116hr2500'
-    doc_attributes = fetch_from_db(doc_name)
-    train_corpus = list(make_corpus_DB(doc_attributes))
+model.train(train_corpus, total_examples=model.corpus_count, epochs=model.epochs)
 
-    # SECTION: MODEL DESIGN
-    vec_size = 24
-    epoch = 100
-    model = gensim.models.doc2vec.Doc2Vec(vector_size=vec_size, min_count=5, epochs=epoch, dm=1, alpha=0.025,
-                                          min_alpha=0.020)
-    model.build_vocab(train_corpus)
+# SECTION: MODEL EVALUATION
+doc_scores = []
+for doc_id in train_corpus:
+    # GETS VECTOR FOR DOC_ID WORDS
+    inferred_vector = model.infer_vector(doc_id.words, epochs=epoch)
+    # MAKES LIST OF MOST SIMILAR VECTORS TO DOC id TUPLES (DOC-ID, SCORE)
+    sims = model.docvecs.most_similar([inferred_vector], topn=len(model.docvecs))
 
-    model.train(train_corpus, total_examples=model.corpus_count, epochs=model.epochs)
+    # NOTE: GET POS/NEG VECTOR COUNTS
+    pos, neg = 0, 0
+    for doc in sims:
+        if doc[1] >= 0:
+            pos += 1
+        else:
+            neg += 1
+    doc_scores.append((doc_id.tags, pos, neg))
 
-    # SECTION: MODEL EVALUATION
-    doc_scores = []
-    for doc_id in train_corpus:
-        # GETS VECTOR FOR DOC_ID WORDS
-        inferred_vector = model.infer_vector(doc_id.words, epochs=epoch)
-        # MAKES LIST OF MOST SIMILAR VECTORS TO DOC id TUPLES (DOC-ID, SCORE)
-        sims = model.docvecs.most_similar([inferred_vector], topn=len(model.docvecs))
-
-        # NOTE: GET POS/NEG VECTOR COUNTS
-        pos, neg = 0, 0
-        for doc in sims:
-            if doc[1] >= 0:
-                pos += 1
-            else:
-                neg += 1
-        doc_scores.append((doc_id.tags, pos, neg))
-
-    # NOTE: PRINTS/STORES POS/NEG DOC COUNTS
-    for doc in doc_scores:
-        for item in train_corpus:
-            if doc[0] == item.tags:
-                scored_doc = (doc[0], ' '.join(item.words), doc[1], doc[2])
-                save_scores(scored_doc)
-                # print('\nDocument ({}): <<{}>>'.format(doc[0], ' '.join(item.words)))
-                # print('POS: {}\tNEG: {}'.format(doc[1], doc[2]))
-
+# NOTE: PRINTS/STORES POS/NEG DOC COUNTS
+for doc in doc_scores:
+    for item in train_corpus:
+        if doc[0] == item.tags:
+            scored_doc = (doc[0], ' '.join(item.words), doc[1], doc[2])
+            save_scores(scored_doc)
+            # print('\nDocument ({}): <<{}>>'.format(doc[0], ' '.join(item.words)))
+            # print('POS: {}\tNEG: {}'.format(doc[1], doc[2]))
 
 cur.close()
 conn.close()
-
-if __name__ == '__main__':
-    main()
