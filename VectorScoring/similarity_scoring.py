@@ -51,7 +51,7 @@ def save_scores(score_tup: tuple) -> None:
     (blend_id, stnd_doc, pos, neg) = score_tup
     cur.execute("""INSERT INTO similarity_scores (blend_id, stnd_doc, pos, neg)
                 VALUES (%s, %s, %s, %s)""",
-                (blend_id, stnd_doc, pos, neg))
+                (blend_id[0], stnd_doc, pos, neg))
     conn.commit()
 
 
