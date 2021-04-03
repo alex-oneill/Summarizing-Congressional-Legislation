@@ -90,7 +90,7 @@ def db_load(docs: list) -> None:
             blend_id = text['blend_id']
             row_num = text['row_number']
             row_text = text['row_text']
-            stnd_text = str(text['stnd_row_text'])
+            stnd_text = ' '.join(text['stnd_row_text'])
 
             cur.execute("""INSERT INTO stnd_row_text (blend_id, row_number, row_text, stnd_text_list, short_name, 
                         sum1, sum2, sum3) 
