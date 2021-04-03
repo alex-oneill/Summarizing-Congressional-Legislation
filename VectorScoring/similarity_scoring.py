@@ -1,0 +1,108 @@
+import random
+import gensim
+import psycopg2
+import smart_open
+import collections
+import logging
+from configparser import ConfigParser
+
+
+# SECTION: FUNCTIONS
+def config(filename='../database.ini', section='postgres'):
+    """Establishes connection to local postgres db with masked credentials."""
+    parser = ConfigParser()
+    parser.read(filename)
+    db_conn = {}
+    for param in parser.items(section):
+        db_conn[param[0]] = param[1]
+    return db_conn
+
+
+def read_corpus(fname, tokens_only=False):
+    with smart_open.open(fname, encoding='iso-8859-1') as f:
+        for i, line in enumerate(f):
+            tokens = gensim.utils.simple_preprocess(line, min_len=3)
+            if tokens_only:
+                yield tokens
+            else:
+                yield gensim.models.doc2vec.TaggedDocument(tokens, [i])
+
+
+def fetch_from_db(short_name) -> list:
+    """Fetches text rows from the cleaned table"""
+    query = f"""SELECT blend_id, row_number, row_text, stnd_text_list, short_name, sum1, sum2, sum3
+            FROM stnd_row_text 
+            WHERE short_name = '{short_name}'
+            ORDER BY row_number ASC"""
+    cur.execute(query)
+    rows = cur.fetchall()
+    return rows
+
+
+def read_corpus_DB(doc_tups: list) -> str:
+    for blend_id, _, _, stnd_text, _, _, _, _ in doc_tups:
+        tokens = gensim.utils.simple_preprocess(stnd_text, min_len=3)
+        yield gensim.models.doc2vec.TaggedDocument(tokens, [blend_id])
+
+
+params = config()
+conn = psycopg2.connect(**params)
+cur = conn.cursor()
+
+doc_name = '116hr2500'
+doc_attributes = fetch_from_db(doc_name)
+
+# SECTION: MODEL PREP
+logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
+
+# NOTE: picked test doc has 10k+ lines
+# train_corpus = list(read_corpus('corpus_docs\\116hr2500.cor'))
+train_corpus = list(read_corpus_DB(doc_attributes))
+
+# SECTION: MODEL DESIGN
+vec_size = 24
+epoch = 100
+model = gensim.models.doc2vec.Doc2Vec(vector_size=vec_size, min_count=5, epochs=epoch, dm=1, alpha=0.025,
+                                      min_alpha=0.020)
+model.build_vocab(train_corpus)
+
+model.train(train_corpus, total_examples=model.corpus_count, epochs=model.epochs)
+
+# SECTION: MODEL EVALUATION
+ranks = []
+second_ranks = []
+sim_hits = []
+last_rank = []
+doc_scores = []
+for doc_id in train_corpus:
+    # NOTE: GETS VECTOR FOR DOC_ID WORDS
+    # inferred_vector = model.infer_vector(train_corpus[doc_id].words, epochs=epoch)
+    inferred_vector = model.infer_vector(doc_id.words, epochs=epoch)
+    # NOTE: MAKES LIST OF MOST SIMILAR VECTORS TO DOC id TUPLES (DOC-ID, SCORE)
+    sims = model.docvecs.most_similar([inferred_vector], topn=len(model.docvecs))
+    # NOTE: STORES RANK OF ITSELF
+    # rank = [docid for docid, sim in sims].index(doc_id)
+    # ranks.append(rank)
+    # second_ranks.append(sims[1])
+    # last_rank.append(sims[-1])
+
+    # NOTE: GET POS/NEG VECTOR COUNTS
+    pos, neg = 0, 0
+    for doc in sims:
+        if doc[1] >= 0:
+            pos += 1
+        else:
+            neg += 1
+
+    doc_scores.append((doc_id.tags, pos, neg))
+
+# NOTE: PRINTS POS/NEG DOC COUNTS
+for doc in doc_scores:
+    for item in train_corpus:
+        if doc[0] == item.tags:
+            # index = item
+            print('\nDocument ({}): <<{}>>'.format(doc[0], ' '.join(item.words)))
+            print('POS: {}\tNEG: {}'.format(doc[1], doc[2]))
+
+cur.close()
+conn.close()
