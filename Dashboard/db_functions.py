@@ -49,9 +49,9 @@ def get_drill_rows(row_num) -> list:
             cur.execute(query)
             dirty_rows = cur.fetchall()
             clean_rows = []
-            for i, text in dirty_rows:
+            for row, text in dirty_rows:
                 clean_str = clean_db_text(text)
-                clean_rows.append((i, clean_str))
+                clean_rows.append((row, clean_str))
             return clean_rows
 
 

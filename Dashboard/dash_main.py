@@ -15,20 +15,24 @@ print(money_hits)
 # SECTION: HITS TABLE CARD
 hits_table = dbc.Card(
     [
-        dash_table.DataTable(
-            id='bill-title',
-            data=hit_list,
-            columns=[{'name': 'Hit Type', 'id': 'hit_type'},
-                     {'name': 'Row Number', 'id': 'row_number'},
-                     {'name': 'Text', 'id': 'row_text'}],
-            style_header={'fontWeight': 'Bold', 'backgroundColor': '#D5D8DC',
-                          'whiteSpace': 'normal', 'height': 'auto',
-                          'textAlign': 'left'},
-            style_data={'whiteSpace': 'normal', 'height': 'auto', 'textAlign': 'left'},
-            style_table={'height': 500, 'overflowY': 'auto'},
-            row_selectable='single',
-            page_size=15
-        )
+        dbc.CardHeader('Money Hits',
+                       style={'fontWeight': 'Bold', 'backgroundColor': '#D5D8DC', 'textTransform': 'uppercase',
+                              'fontFamily': 'monospace', 'fontSize': '.875rem'}),
+        dbc.CardBody(
+            dash_table.DataTable(
+                id='bill-title',
+                data=hit_list,
+                columns=[{'name': 'Hit Type', 'id': 'hit_type'},
+                         {'name': 'Row Number', 'id': 'row_number'},
+                         {'name': 'Text', 'id': 'row_text'}],
+                style_header={'fontWeight': 'Bold', 'backgroundColor': '#D5D8DC',
+                              'whiteSpace': 'normal', 'height': 'auto',
+                              'textAlign': 'left'},
+                style_data={'whiteSpace': 'normal', 'height': 'auto', 'textAlign': 'left'},
+                style_table={'height': 500, 'overflowY': 'auto'},
+                row_selectable='single',
+                page_size=15
+            ), id='hits-body')
     ], id='bill-card')
 
 # SECTION: HITS DRILL-DOWN CARD
@@ -37,8 +41,49 @@ hits_drill_table = dbc.Card(
         dbc.CardHeader('Drill Down - 5 rows',
                        style={'fontWeight': 'Bold', 'backgroundColor': '#D5D8DC', 'textTransform': 'uppercase',
                               'fontFamily': 'monospace', 'fontSize': '.875rem'}),
-        dbc.CardBody('', id='drill-body')
+        dbc.CardBody(
+            dash_table.DataTable(
+                data=[],
+                id='fin-drill-table',
+                columns=[{'name': 'Row Number', 'id': 'Row Number'},
+                         {'name': 'Text', 'id': 'Text'}],
+                style_header={'fontWeight': 'Bold', 'backgroundColor': '#D5D8DC',
+                              'whiteSpace': 'normal', 'height': 'auto',
+                              'textAlign': 'left'},
+                style_data={'whiteSpace': 'normal', 'height': 'auto', 'textAlign': 'left'},
+                style_table={'height': 500, 'overflowY': 'auto'},
+                page_size=15
+            ), id='drill-body')
     ], id='hits-drill-card')
+
+# SECTION: SIMILARITY CHART
+sim_chart = dbc.Card(
+    [
+        dbc.CardHeader('Similarity Chart',
+                       style={'fontWeight': 'Bold', 'backgroundColor': '#D5D8DC', 'textTransform': 'uppercase',
+                              'fontFamily': 'monospace', 'fontSize': '.875rem'}),
+        dbc.CardBody('something', id='sim-chart-body')
+    ], id='sim-chart-card')
+
+# SECTION: SIMILARITY DRILL DOWN
+sim_drill = dbc.Card(
+    [
+        dbc.CardHeader('Similarity Drill Down',
+                       style={'fontWeight': 'Bold', 'backgroundColor': '#D5D8DC', 'textTransform': 'uppercase',
+                              'fontFamily': 'monospace', 'fontSize': '.875rem'}),
+        dbc.CardBody(
+            dash_table.DataTable(
+                data=[],
+                id='sim-drill-table',
+                columns=[{'name': 'Row Number', 'id': 'Row Number'},
+                         {'name': 'Text', 'id': 'Text'}],
+                style_header={'fontWeight': 'Bold', 'backgroundColor': '#D5D8DC',
+                              'whiteSpace': 'normal', 'height': 'auto',
+                              'textAlign': 'left'},
+                style_data={'whiteSpace': 'normal', 'height': 'auto', 'textAlign': 'left'},
+                style_table={'height': 500, 'overflowY': 'auto'},
+                page_size=15), id='sim-drill-body')
+    ], id='sim-drill-card')
 
 
 # SECTION: MAIN LAYOUT
@@ -47,11 +92,13 @@ app.layout = dbc.Container([
                             html.H1('Enter'),
                             dbc.Row(
                                 [
-                                    dbc.Col(hits_table, width=5)
+                                    dbc.Col(hits_table, width=5),
+                                    dbc.Col(sim_chart, width=7)
                                 ]),
                             dbc.Row(
                                 [
-                                    dbc.Col(hits_drill_table, width=5)
+                                    dbc.Col(hits_drill_table, width=5),
+                                    dbc.Col(sim_drill, width=7)
                                 ]
                             )
             ], fluid=True)
@@ -59,7 +106,8 @@ app.layout = dbc.Container([
 
 # SECTION: DRILL DOWN CALLBACK
 @app.callback(
-    Output('drill-body', 'children'),
+    # Output('drill-body', 'children'),
+    Output('fin-drill-table', 'data'),
     Input('bill-title', 'selected_rows')
 )
 def drill_down(selected_rows):
@@ -67,7 +115,11 @@ def drill_down(selected_rows):
         index = selected_rows[0]
         row_number = hit_list[index]['row_number']
         drilled = get_drill_rows(row_number)
-        return str(drilled)
+        table_list = []
+        for row, text in drilled:
+            out_dict = {'Row Number': row, 'Text': text}
+            table_list.append(out_dict)
+        return table_list
 #
 # """
 # Dash port of Shiny iris k-means example:
