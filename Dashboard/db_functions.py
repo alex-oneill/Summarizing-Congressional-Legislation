@@ -32,6 +32,17 @@ def get_money_hits() -> list:
             return rows
 
 
+def get_sim_scores() -> list:
+    """Retrieves all text rows from the DB with sample bill ID 116hr2500"""
+    with psycopg2.connect(**params) as conn:
+        with conn.cursor() as cur:
+            cur.execute("""SELECT * FROM similarity_scores
+                        ORDER BY neg DESC""")
+            # rows = cur.fetchmany(100)
+            rows = cur.fetchall()
+            return rows
+
+
 def get_drill_rows(row_num) -> list:
     """Retrieves 5 rows prior and 3 rows after a selected money-hit row from sample bill 116hr2500"""
     with psycopg2.connect(**params) as conn:

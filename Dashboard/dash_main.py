@@ -6,11 +6,14 @@ from dash.dependencies import Input, Output
 import dash_table
 from db_functions import *
 import pandas as pd
+import plotly.graph_objects as go
 
 money_hits = pd.DataFrame(get_money_hits(), columns=['hit_type', 'row_number', 'row_text'])
 money_hits.drop_duplicates(subset=['row_number'], inplace=True)
 hit_list = money_hits.to_dict('records')
-print(money_hits)
+
+
+# print(money_hits)
 
 # SECTION: HITS TABLE CARD
 hits_table = dbc.Card(
@@ -31,7 +34,7 @@ hits_table = dbc.Card(
                 style_data={'whiteSpace': 'normal', 'height': 'auto', 'textAlign': 'left'},
                 style_table={'height': 500, 'overflowY': 'auto'},
                 row_selectable='single',
-                page_size=15
+                page_size=15, sort_action='native', filter_action='native'
             ), id='hits-body')
     ], id='bill-card')
 
@@ -56,14 +59,36 @@ hits_drill_table = dbc.Card(
             ), id='drill-body')
     ], id='hits-drill-card')
 
+sim_scores = pd.DataFrame(get_sim_scores(), columns=['blend_id', 'stnd_doc', 'pos', 'neg'])
+# money_hits.drop_duplicates(subset=['row_number'], inplace=True)
+# sim_scores['negneg'] = '-'+sim_scores['neg']
+sims_list = sim_scores.to_dict('records')
+y = list(range(sim_scores.blend_id.size))
+layout = go.Layout(
+    yaxis=dict(
+        range=[50, -1]
+    ),
+    hovermode='y unified',
+    xaxis_title='Neg < - > Pos Score Counts',
+    yaxis_title='Row #',
+    title={'text': 'Neg/Pos Row Scores (Sorted by Most Negative)', 'x': 0.5}
+)
+fig = go.Figure(data=[
+    go.Bar(y=y, x=sim_scores['pos'], orientation='h', hovertext=sim_scores['blend_id'], base=0, name='pos'),
+    go.Bar(y=y, x=-sim_scores['neg'], orientation='h', hovertext=sim_scores['blend_id'], base=0, name='neg')
+], layout=layout)
+fig.update_layout(barmode='stack')
+# fig['layout']['yaxis']['autorange'] = "reversed"
+
 # SECTION: SIMILARITY CHART
 sim_chart = dbc.Card(
     [
         dbc.CardHeader('Similarity Chart',
                        style={'fontWeight': 'Bold', 'backgroundColor': '#D5D8DC', 'textTransform': 'uppercase',
                               'fontFamily': 'monospace', 'fontSize': '.875rem'}),
-        dbc.CardBody('something', id='sim-chart-body')
+        dbc.CardBody(dcc.Graph(id='chart', figure=fig), id='sim-chart-body')
     ], id='sim-chart-card')
+
 
 # SECTION: SIMILARITY DRILL DOWN
 sim_drill = dbc.Card(
@@ -73,16 +98,18 @@ sim_drill = dbc.Card(
                               'fontFamily': 'monospace', 'fontSize': '.875rem'}),
         dbc.CardBody(
             dash_table.DataTable(
-                data=[],
+                data=sims_list,
                 id='sim-drill-table',
-                columns=[{'name': 'Row Number', 'id': 'Row Number'},
-                         {'name': 'Text', 'id': 'Text'}],
+                columns=[{'name': 'Row ID', 'id': 'blend_id'},
+                         {'name': 'Row Text', 'id': 'stnd_doc'},
+                         {'name': 'pos', 'id': 'pos'},
+                         {'name': 'neg', 'id': 'neg'}],
                 style_header={'fontWeight': 'Bold', 'backgroundColor': '#D5D8DC',
                               'whiteSpace': 'normal', 'height': 'auto',
-                              'textAlign': 'left'},
+                              'textAlign': 'center'},
                 style_data={'whiteSpace': 'normal', 'height': 'auto', 'textAlign': 'left'},
                 style_table={'height': 500, 'overflowY': 'auto'},
-                page_size=15), id='sim-drill-body')
+                page_size=15, sort_action='native', filter_action='native'), id='sim-drill-body')
     ], id='sim-drill-card')
 
 
@@ -104,7 +131,7 @@ app.layout = dbc.Container([
             ], fluid=True)
 
 
-# SECTION: DRILL DOWN CALLBACK
+# SECTION: MONEY HITS DRILL DOWN CALLBACK
 @app.callback(
     # Output('drill-body', 'children'),
     Output('fin-drill-table', 'data'),
